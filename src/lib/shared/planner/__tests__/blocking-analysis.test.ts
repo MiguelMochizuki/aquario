@@ -241,4 +241,20 @@ describe("analyzeBlocking", () => {
     const result = run({ completedCodes: [], selected: [], waivers: [{ target: "U8" }] });
     expect(result.toVerify.map(item => item.code)).toContain("U8");
   });
+
+  it("does not send descendants of a discipline with no registered requirement to toVerify", () => {
+    const chain = [
+      goal("R1", null, { requirementsKnown: false }),
+      goal("R2", "R1"),
+      goal("R3", "R2"),
+    ];
+    const none = analyzeBlocking({ goals: chain, completedCodes: [], selected: [] });
+    expect(none.available.map(item => item.code)).toEqual(["R1"]);
+    expect(none.blocked.map(item => item.code)).toEqual(["R2", "R3"]);
+    expect(none.toVerify).toEqual([]);
+
+    const picked = analyzeBlocking({ goals: chain, completedCodes: [], selected: ["R1"] });
+    expect(picked.unlockedLater.map(item => item.code)).toEqual(["R2"]);
+    expect(picked.blocked.map(item => item.code)).toEqual(["R3"]);
+  });
 });
