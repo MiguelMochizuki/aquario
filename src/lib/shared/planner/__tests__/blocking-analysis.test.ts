@@ -236,4 +236,9 @@ describe("analyzeBlocking", () => {
     expect(result.invalidSelected).toHaveLength(10);
     expect(result.blocked).toHaveLength(460);
   });
+
+  it("keeps an unreadable requirement in toVerify even under a whole-discipline waiver", () => {
+    const result = run({ completedCodes: [], selected: [], waivers: [{ target: "U8" }] });
+    expect(result.toVerify.map(item => item.code)).toContain("U8");
+  });
 });

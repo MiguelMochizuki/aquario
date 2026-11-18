@@ -181,3 +181,9 @@ it("shows loading, empty curriculum and mismatched curriculum states", () => {
   rerender(<BlockingPanel {...props} curriculumMatched={false} />);
   expect(screen.getByText(/currículo do SIGAA é diferente/i)).toBeInTheDocument();
 });
+
+it("tells the student that a suggested discipline already completed was ignored", () => {
+  render(<BlockingPanel {...props} suggestedCodes={["P1"]} />);
+  fireEvent.click(screen.getByRole("button", { name: "Usar grade gerada" }));
+  expect(screen.getByText(/Nome P1 já está cumprida e foi ignorada/)).toBeInTheDocument();
+});
